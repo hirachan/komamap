@@ -6,7 +6,8 @@ RUN pip install \
     chromedriver-binary==84.0.4147.30.0 \
     Pillow \
     gpxpy \
-    geopy
+    geopy \
+    requests
 
 FROM python:3.8-slim as runner
 
