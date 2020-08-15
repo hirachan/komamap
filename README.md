@@ -17,3 +17,7 @@ docker build -t komamap .
 ```console
 docker run -it --rm -v $(pwd)/output:/app/output komamap -h
 ```
+
+```console
+docker run -it --rm -v $(pwd)/output:/app/output komamap --rwgps 30477783
+```
