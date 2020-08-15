@@ -4,3 +4,7 @@ dist
 build
 Pipfile*
 .venv
+output/
+*.gpx
+*.html
+*.png
