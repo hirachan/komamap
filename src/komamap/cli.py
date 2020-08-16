@@ -3,6 +3,7 @@ import sys
 import argparse
 
 from . import komamap
+from . import rwgps
 
 
 def get_opt() -> argparse.Namespace:
@@ -47,10 +48,10 @@ def main() -> int:
     args = get_opt()
 
     if args.route_id:
-        komamap.download_rwgps("rwgps_track.gpx", args.route_id, "track", args.privacy_code)
+        rwgps.download_gpx("rwgps_track.gpx", args.route_id, "track", args.privacy_code)
         args.gpx = "rwgps_track.gpx"
 
-        komamap.download_rwgps("rwgps_route.gpx", args.route_id, "route", args.privacy_code)
+        rwgps.download_gpx("rwgps_route.gpx", args.route_id, "route", args.privacy_code)
         args.route = "rwgps_route.gpx"
 
     route = args.route if args.route else args.gpx
