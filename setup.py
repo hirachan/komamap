@@ -14,6 +14,7 @@ INSTALL_REQUIRES = [
     "gpxpy",
     "geopy",
     "requests",
+    "xlrd",
 ]
 EXTRA_REQUIRES = {
     "test": [

@@ -1,81 +1,31 @@
-from typing import List
-from dataclasses import dataclass
 import os
+import sys
+from typing import List, Union
 
-import gpxpy
-
-from .track import Track, read_track_from_gpx, Point
+from .track import read_track_from_gpx
 from .maplib import Map
 from .chrome import Chrome
+from . import cue
 
 
-@dataclass
-class CuePoint:
-    latitude: float
-    longitude: float
-    description: str
-    rotate: float = 0
-
-
-def read_waypoint(filename: str) -> List[CuePoint]:
-    gpx_file = open(filename, 'r')
-    gpx = gpxpy.parse(gpx_file)
-
-    wpts: List[CuePoint] = []
-    for wpt in gpx.waypoints:
-
-        wpts.append(CuePoint(
-            wpt.latitude,
-            wpt.longitude,
-            wpt.name))
-
-    return wpts
-
-
-def read_route(filename: str) -> List[CuePoint]:
-    gpx_file = open(filename, 'r')
-    gpx = gpxpy.parse(gpx_file)
-
-    wpts: List[CuePoint] = []
-    for route in gpx.routes:
-        for point in route.points:
-            wpts.append(CuePoint(
-                point.latitude,
-                point.longitude,
-                point.comment))
-
-    return wpts
-
-
-def get_points_near_cuepoint(points: Track, wpts: List[CuePoint]):
-    cue_points = []
-    n = 0
-    wpt = wpts[0]
-    for point_no, point in enumerate(points):
-        dist = point.distance_from(Point(wpt.latitude, wpt.longitude))
-        print(dist)
-
-        if dist <= 10:
-            cue_points.append(point_no)
-            n += 1
-            if n >= len(wpts):
-                break
-
-            wpt = wpts[n]
-
-    return cue_points
-
-
-def komamap(gpx: str, route: str):
+def komamap(gpx: str, route: str, xl_dist_col: int = 4, xl_start_row: int = 3, map_type: str = "openstreetmap"):
     points = read_track_from_gpx(gpx)
-    mp = Map(points)
+    mp = Map(points, map_type)
 
+    cues: List[Union[cue.CuePoint, cue.CueDistance]]
     if route:
-        wpts = read_route(route)
+        ext = os.path.splitext(route.lower())[1]
+        if ext == ".gpx":
+            cues = cue.read_route(route)
+        elif ext == ".xlsx":
+            cues = cue.read_excel(route, xl_dist_col, xl_start_row)
+        else:
+            sys.stderr.write("Unknown Route File Type")
+            sys.exit(1)
     else:
-        wpts = read_waypoint(gpx)
+        cues = cue.read_waypoint(gpx)
 
-    cue_points = get_points_near_cuepoint(points, wpts)
+    cue_points = cue.get_points_near_cue(points, cues)
 
     mp.add_arrow(points, cue_points)
     mp.save("map.html")
@@ -83,6 +33,5 @@ def komamap(gpx: str, route: str):
     chrome = Chrome("map.html", mp.map_id)
 
     os.makedirs("output", exist_ok=True)
-    for no, qp_no in enumerate(cue_points):
-        qp = points[qp_no]
+    for no, qp in enumerate(cue_points):
         chrome.save_koma(os.path.join("output", f"{no + 1}.png"), qp)

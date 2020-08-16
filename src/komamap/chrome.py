@@ -42,7 +42,7 @@ class Chrome:
         self._driver.execute_script(
             f"map_{self._map_id}.panTo(new L.LatLng({point.latitude}, {point.longitude}), {{'animate': false}});")
 
-        while True:
+        for _ in range(15):
             time.sleep(1.0)
             self._driver.save_screenshot("_map.png")
             img = Image.open('_map.png')

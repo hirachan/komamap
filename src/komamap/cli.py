@@ -4,6 +4,7 @@ import argparse
 
 from . import komamap
 from . import rwgps
+from .maplib import MapType
 
 
 def get_opt() -> argparse.Namespace:
@@ -13,8 +14,8 @@ def get_opt() -> argparse.Namespace:
                         help="GPX File with Track")
 
     parser.add_argument("--route", dest="route",
-                        type=str, metavar="GPX FILEPATH", required=False,
-                        help="GPX File with Cue as Route")
+                        type=str, metavar="FILEPATH", required=False,
+                        help="GPX File with Cue as Route or Excel Cue Sheet")
 
     parser.add_argument("--rwgps", dest="route_id",
                         type=str, metavar="ROUTE ID", required=False,
@@ -23,6 +24,19 @@ def get_opt() -> argparse.Namespace:
     parser.add_argument("--privacy-code", dest="privacy_code",
                         type=str, metavar="PRIVACY CODE", required=False,
                         help="RWGPS Route Privacy Code")
+
+    parser.add_argument("--col", dest="xl_dist_col",
+                        type=int, metavar="NUMBER", required=False, default=4,
+                        help="Column Number of Total Distance for Excel Cue Sheet (A -> 1)")
+
+    parser.add_argument("--row", dest="xl_start_row",
+                        type=int, metavar="NUMBER", required=False, default=3,
+                        help="Starting Row Number of for Excel Cue Sheet")
+
+    parser.add_argument("--maptype", dest="map_type",
+                        type=str, metavar="MAP TYPE",
+                        choices=MapType,
+                        default="openstreetmap", help=", ".join(MapType))
 
     # parser.add_argument("command", action="store")
     # parser.add_argument("files", action="store", nargs="+")
@@ -51,12 +65,13 @@ def main() -> int:
         rwgps.download_gpx("rwgps_track.gpx", args.route_id, "track", args.privacy_code)
         args.gpx = "rwgps_track.gpx"
 
-        rwgps.download_gpx("rwgps_route.gpx", args.route_id, "route", args.privacy_code)
-        args.route = "rwgps_route.gpx"
+        if not args.route:
+            rwgps.download_gpx("rwgps_route.gpx", args.route_id, "route", args.privacy_code)
+            args.route = "rwgps_route.gpx"
 
     route = args.route if args.route else args.gpx
 
-    komamap.komamap(gpx=args.gpx, route=route)
+    komamap.komamap(args.gpx, route, args.xl_dist_col, args.xl_start_row, args.map_type)
 
     return 0
 

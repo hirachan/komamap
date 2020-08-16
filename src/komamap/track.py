@@ -20,6 +20,16 @@ class Point:
         return geo.distance(point.latitude, point.longitude, None,
                             self.latitude, self.longitude, None)
 
+    def get_point_by_distance(self, distance: float) -> "Point":
+        _distance = self.distance
+        pt = self
+        while pt.next is not None:
+            pt = pt.next
+            if pt.distance - _distance >= distance:
+                return pt
+
+        return pt
+
 
 class Track(UserList):
     def __init__(self, point: Optional[Point] = None):
@@ -36,6 +46,14 @@ class Track(UserList):
             point.direction = geo.get_course(prev.latitude, prev.longitude, point.latitude, point.longitude)
 
         super().append(point)
+
+    def get_point_by_distance(self, distance: float, offset: int = 0) -> Point:
+        _distance = self.data[offset].distance
+        for i in range(offset + 1, len(self.data)):
+            if self.data[i].distance - _distance >= distance:
+                return self.data[i]
+
+        return self.data[-1]
 
 
 def read_track_from_gpx(filename: str) -> Track:
