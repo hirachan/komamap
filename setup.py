@@ -19,13 +19,17 @@ INSTALL_REQUIRES = [
 EXTRA_REQUIRES = {
     "test": [
         "pytest",
-        "pylint",
+        "mypy",
         "flake8",
         "autopep8",
     ],
+    "api": [
+        "falcon",
+    ]
 }
 CONSOLE_SCRIPTS = [
     "komamap = komamap.cli:main",
+    "komamap_api = komamap.cli_api:main",
 ]
 DATA_DIRS = []
 

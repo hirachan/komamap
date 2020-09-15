@@ -8,7 +8,7 @@ from .chrome import Chrome
 from . import cue
 
 
-def komamap(gpx: str, route: str, xl_dist_col: int = 4, xl_start_row: int = 3, map_type: str = "openstreetmap"):
+def komamap(gpx: str, route: str, xl_dist_col: int = 4, xl_start_row: int = 3, map_type: str = "openstreetmap", outdir: str = "output"):
     points = read_track_from_gpx(gpx)
     mp = Map(points, map_type)
 
@@ -32,16 +32,16 @@ def komamap(gpx: str, route: str, xl_dist_col: int = 4, xl_start_row: int = 3, m
 
     chrome = Chrome("map.html", mp.map_id)
 
-    os.makedirs("output", exist_ok=True)
+    os.makedirs(outdir, exist_ok=True)
     prev_distance = -1.
     sub_name = 0
     for qp in cue_points:
         if qp.distance == prev_distance:
-            filename = "%.1f-%d.png" % (qp.distance / 1000, sub_name)
+            filename = "%06.1f-%d.png" % (qp.distance / 1000, sub_name)
             sub_name += 1
         else:
-            filename = "%.1f.png" % (qp.distance / 1000)
+            filename = "%06.1f.png" % (qp.distance / 1000)
             sub_name = 0
 
-        chrome.save_koma(os.path.join("output", filename), qp)
+        chrome.save_koma(os.path.join(outdir, filename), qp)
         prev_distance = qp.distance
