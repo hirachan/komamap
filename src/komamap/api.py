@@ -34,7 +34,7 @@ class KomaMapAPI(object):
                 outdir=outdir)
 
             with ZipFile(os.path.join(tmpdir, 'map.zip'), 'w') as myzip:
-                for filepath in glob.glob(os.path.join(outdir, "*")):
+                for filepath in glob.glob(os.path.join(outdir, "*.png")):
                     myzip.write(filepath, os.path.basename(filepath))
 
             data = open(os.path.join(tmpdir, 'map.zip'), "rb").read()
