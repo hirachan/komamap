@@ -15,7 +15,7 @@ class Chrome:
         options.add_argument("--no-sandbox")  # needs in docker
         options.add_argument("--disable-dev-shm-usage")  # needs in docker
         driver = webdriver.Chrome(options=options)
-        driver.set_window_size(400, 400)
+        driver.set_window_size(600, 600)
 
         driver.get(f"file:///{os.getcwd()}/{filename}")
 
@@ -25,9 +25,9 @@ class Chrome:
     def _image_loaded(self, img) -> bool:
         colors = [
             img.getpixel((0, 0)),
-            img.getpixel((149, 0)),
-            img.getpixel((0, 149)),
-            img.getpixel((149, 149))]
+            img.getpixel((224, 0)),
+            img.getpixel((0, 224)),
+            img.getpixel((224, 224))]
 
         return all(map(lambda _: _ != (221, 221, 221, 255), colors))
 
@@ -43,11 +43,11 @@ class Chrome:
             f"map_{self._map_id}.panTo(new L.LatLng({point.latitude}, {point.longitude}), {{'animate': false}});")
 
         for _ in range(15):
-            time.sleep(1.0)
+            time.sleep(0.5)
             self._driver.save_screenshot("_map.png")
             img = Image.open('_map.png')
             img = img.rotate(point.direction)
-            img = self.crop_center(img, 150, 150)
+            img = self.crop_center(img, 225, 225)
 
             if self._image_loaded(img):
                 break

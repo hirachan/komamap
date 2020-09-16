@@ -1,4 +1,5 @@
 from typing import List
+import os
 
 import folium
 
@@ -20,6 +21,16 @@ MapType = [
     'stamenwatercolor',
 ]
 
+api_key = os.environ["GOOGLEMAP_API_KEY"]
+
+folium.folium._default_js.append(
+    ("googlemap",
+     f"https://maps.googleapis.com/maps/api/js?key={api_key}"))
+
+folium.folium._default_js.append(
+    ("googleleaflet",
+     "https://unpkg.com/leaflet.gridlayer.googlemutant@latest/Leaflet.GoogleMutant.js"))
+
 
 def get_point_by_distance(points: Track, distance: float, offset: int = 0) -> Point:
     _distance = points[offset].distance
@@ -35,13 +46,14 @@ class Map:
         print(map_type)
         latitude = points[0].latitude
         longitude = points[0].longitude
-        self.map = folium.Map(location=[latitude, longitude], zoom_start=16, tiles=map_type)
+        # self.map = folium.Map(location=[latitude, longitude], zoom_start=16, tiles=map_type)
+        self.map = folium.Map(location=[latitude, longitude], zoom_start=18, tiles=None)
 
         folium.PolyLine(
             [(_.latitude, _.longitude) for _ in points],
             color="#0000ff",
             opacity=0.8,
-            weight=2
+            weight=4
         ).add_to(self.map)
 
     @property
@@ -61,9 +73,19 @@ class Map:
                 fill_opacity=1.0,
                 color='#0000ff',
                 number_of_sides=3,
-                radius=10,
+                radius=15,
                 rotation=point.direction - 90
             ).add_to(self.map)
 
     def save(self, filename: str):
         self.map.save(filename)
+        with open(filename, "a") as fw:
+            fw.write("""<script>
+var Gmap = L.gridLayer.googleMutant({
+    maxZoom: 24,
+    type:'roadmap'
+});
+
+map_%s.addLayer(Gmap);
+</script>
+""" % (self.map_id))
