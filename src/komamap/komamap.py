@@ -8,7 +8,7 @@ from .chrome import Chrome
 from . import cue
 
 
-def komamap(gpx: str, route: str, xl_dist_col: int = 4, xl_start_row: int = 3, map_type: str = "openstreetmap", outdir: str = "output"):
+def komamap(gpx: str, route: str, xl_dist_col: int = 4, xl_start_row: int = 3, map_type: str = "openstreetmap", outdir: str = "output", crop_size: int = 200):
     points = read_track_from_gpx(gpx)
     mp = Map(points, map_type)
 
@@ -43,5 +43,5 @@ def komamap(gpx: str, route: str, xl_dist_col: int = 4, xl_start_row: int = 3, m
             filename = "%06.1f.png" % (qp.distance / 1000)
             sub_name = 0
 
-        chrome.save_koma(os.path.join(outdir, filename), qp)
+        chrome.save_koma(os.path.join(outdir, filename), qp, crop_size)
         prev_distance = qp.distance

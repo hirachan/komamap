@@ -22,12 +22,12 @@ class Chrome:
         self._driver = driver
         self._map_id = map_id
 
-    def _image_loaded(self, img) -> bool:
+    def _image_loaded(self, img, corner: int) -> bool:
         colors = [
             img.getpixel((0, 0)),
-            img.getpixel((224, 0)),
-            img.getpixel((0, 224)),
-            img.getpixel((224, 224))]
+            img.getpixel((corner, 0)),
+            img.getpixel((0, corner)),
+            img.getpixel((corner, corner))]
 
         return all(map(lambda _: _ != (221, 221, 221, 255), colors))
 
@@ -38,7 +38,7 @@ class Chrome:
                          (img_width + crop_width) // 2,
                          (img_height + crop_height) // 2))
 
-    def save_koma(self, filename: str, point: Point):
+    def save_koma(self, filename: str, point: Point, crop_size: int):
         self._driver.execute_script(
             f"map_{self._map_id}.panTo(new L.LatLng({point.latitude}, {point.longitude}), {{'animate': false}});")
 
@@ -47,9 +47,9 @@ class Chrome:
             self._driver.save_screenshot("_map.png")
             img = Image.open('_map.png')
             img = img.rotate(point.direction)
-            img = self.crop_center(img, 225, 225)
+            img = self.crop_center(img, crop_size, crop_size)
 
-            if self._image_loaded(img):
+            if self._image_loaded(img, crop_size - 1):
                 break
 
         img.save(filename)

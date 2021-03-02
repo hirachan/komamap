@@ -38,6 +38,10 @@ def get_opt() -> argparse.Namespace:
                         choices=MapType,
                         default="openstreetmap", help=", ".join(MapType))
 
+    parser.add_argument("--size", dest="crop_size",
+                        type=int, metavar="KOMA SIZE", required=False, default=200,
+                        help="Crop size")
+
     # parser.add_argument("command", action="store")
     # parser.add_argument("files", action="store", nargs="+")
     # parser.add_argument("-n", "--num", dest="num",
@@ -71,7 +75,7 @@ def main() -> int:
 
     route = args.route if args.route else args.gpx
 
-    komamap.komamap(args.gpx, route, args.xl_dist_col, args.xl_start_row, args.map_type)
+    komamap.komamap(args.gpx, route, args.xl_dist_col, args.xl_start_row, args.map_type, crop_size=args.crop_size)
 
     return 0
 
