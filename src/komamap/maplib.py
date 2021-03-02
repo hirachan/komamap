@@ -46,8 +46,8 @@ class Map:
         print(map_type)
         latitude = points[0].latitude
         longitude = points[0].longitude
-        # self.map = folium.Map(location=[latitude, longitude], zoom_start=16, tiles=map_type)
-        self.map = folium.Map(location=[latitude, longitude], zoom_start=18, tiles=None)
+        self.map = folium.Map(location=[latitude, longitude], zoom_start=16, tiles=map_type)
+        # self.map = folium.Map(location=[latitude, longitude], zoom_start=18, tiles=None)
 
         folium.PolyLine(
             [(_.latitude, _.longitude) for _ in points],
