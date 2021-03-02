@@ -3,7 +3,7 @@ FROM python:3.8 as builder
 RUN pip install \
     folium \
     selenium \
-    chromedriver-binary==84.0.4147.30.0 \
+    chromedriver-binary==88.0.4324.96.0 \
     Pillow \
     gpxpy \
     geopy \
@@ -19,7 +19,7 @@ RUN apt update \
     && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
     && apt update \
     && apt install -y google-chrome-stable \
-    && wget https://chromedriver.storage.googleapis.com/84.0.4147.30/chromedriver_linux64.zip \
+    && wget https://chromedriver.storage.googleapis.com/88.0.4324.96/chromedriver_linux64.zip \
     && unzip chromedriver_linux64.zip \
     && mv chromedriver /usr/local/bin/
 

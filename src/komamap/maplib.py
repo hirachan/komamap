@@ -21,7 +21,7 @@ MapType = [
     'stamenwatercolor',
 ]
 
-api_key = os.environ["GOOGLEMAP_API_KEY"]
+api_key = os.environ.get("GOOGLEMAP_API_KEY", "")
 
 folium.folium._default_js.append(
     ("googlemap",

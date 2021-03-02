@@ -9,7 +9,7 @@ import glob
 INSTALL_REQUIRES = [
     "folium",
     "selenium",
-    "chromedriver-binary==84.0.4147.30.0",
+    "chromedriver-binary==88.0.4324.96.0",
     "Pillow",
     "gpxpy",
     "geopy",
